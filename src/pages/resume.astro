@@ -4,88 +4,278 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Resume" description="Professional background and experience of Scott Wheeler">
   <div class="container">
-    <header class="page-header">
-      <h1><span class="accent">#</span> Resume</h1>
-      <p>Privacy/Information Security Officer with 10+ years in IT.</p>
-      <a href="/resume.pdf" class="download-link mono" download>
-        <span class="accent">&gt;</span> download PDF
-      </a>
-    </header>
-
-    <section class="section">
-      <h2><span class="accent">##</span> Experience</h2>
-
-      <div class="entry">
-        <div class="entry-header">
-          <h3>Privacy/Information Security Officer</h3>
-          <span class="mono date">Present</span>
+    <!-- Terminal unlock section -->
+    <div id="terminal-lock" class="terminal-lock">
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">resume.sh</span>
         </div>
-        <p class="company">Company Name</p>
-        <ul>
-          <li>Leading privacy and security initiatives</li>
-          <li>Developing and implementing security policies</li>
-          <li>Conducting risk assessments and compliance audits</li>
+        <div class="terminal-body">
+          <div class="terminal-output">
+            <p><span class="accent">$</span> cat resume.txt</p>
+            <p class="error">Error: Permission denied</p>
+            <p class="muted">Resume content is protected from bots and scrapers.</p>
+            <p class="muted">Prove you're human by typing the unlock command.</p>
+            <p>&nbsp;</p>
+            <p><span class="accent">hint:</span> type <code>unlock</code> and press Enter</p>
+          </div>
+          <div class="terminal-input-line">
+            <span class="accent">$</span>
+            <input
+              type="text"
+              id="terminal-input"
+              class="terminal-input"
+              autocomplete="off"
+              spellcheck="false"
+              autofocus
+            />
+            <span class="cursor">_</span>
+          </div>
+          <p id="error-msg" class="error hidden"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resume content (hidden by default) -->
+    <div id="resume-content" class="resume-content hidden">
+      <header class="page-header">
+        <h1><span class="accent">#</span> Resume</h1>
+        <p>Privacy/Information Security Officer with 10+ years in IT.</p>
+        <a href="/resume.pdf" class="download-link mono" download>
+          <span class="accent">&gt;</span> download PDF
+        </a>
+      </header>
+
+      <section class="section">
+        <h2><span class="accent">##</span> Experience</h2>
+
+        <div class="entry">
+          <div class="entry-header">
+            <h3>Privacy/Information Security Officer</h3>
+            <span class="mono date">Present</span>
+          </div>
+          <p class="company">Company Name</p>
+          <ul>
+            <li>Leading privacy and security initiatives</li>
+            <li>Developing and implementing security policies</li>
+            <li>Conducting risk assessments and compliance audits</li>
+          </ul>
+        </div>
+
+        <!-- Add more experience entries here -->
+      </section>
+
+      <section class="section">
+        <h2><span class="accent">##</span> Skills</h2>
+
+        <div class="skills-grid">
+          <div class="skill-category">
+            <h3>Security</h3>
+            <ul>
+              <li>Risk Assessment</li>
+              <li>Compliance (GDPR, HIPAA, etc.)</li>
+              <li>Incident Response</li>
+            </ul>
+          </div>
+
+          <div class="skill-category">
+            <h3>Technical</h3>
+            <ul>
+              <li>Python</li>
+              <li>Linux Administration</li>
+              <li>Network Security</li>
+              <li>Cloud Security</li>
+              <li>Microsoft 365</li>
+            </ul>
+          </div>
+
+          <div class="skill-category">
+            <h3>Tools</h3>
+            <ul>
+              <li>Security Frameworks</li>
+              <li>Automation Scripts</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2><span class="accent">##</span> Certifications</h2>
+        <ul class="cert-list">
+          <li><span class="cert-name">CompTIA Cloud+ ce</span></li>
+          <li><span class="cert-name">Okta Certified Administrator</span></li>
+          <li><span class="cert-name">Okta Certified Professional</span></li>
         </ul>
-      </div>
+      </section>
 
-      <!-- Add more experience entries here -->
-    </section>
-
-    <section class="section">
-      <h2><span class="accent">##</span> Skills</h2>
-
-      <div class="skills-grid">
-        <div class="skill-category">
-          <h3>Security</h3>
-          <ul>
-            <li>Risk Assessment</li>
-            <li>Compliance (GDPR, HIPAA, etc.)</li>
-            <li>Incident Response</li>
-          </ul>
-        </div>
-
-        <div class="skill-category">
-          <h3>Technical</h3>
-          <ul>
-            <li>Python</li>
-            <li>Linux Administration</li>
-            <li>Network Security</li>
-            <li>Cloud Security</li>
-            <li>Microsoft 365</li>
-          </ul>
-        </div>
-
-        <div class="skill-category">
-          <h3>Tools</h3>
-          <ul>
-            <li>Security Frameworks</li>
-            <li>Automation Scripts</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2><span class="accent">##</span> Certifications</h2>
-      <ul class="cert-list">
-        <li><span class="cert-name">CompTIA Cloud+ ce</span></li>
-        <li><span class="cert-name">Okta Certified Administrator</span></li>
-        <li><span class="cert-name">Okta Certified Professional</span></li>
-      </ul>
-    </section>
-
-    <section class="section contact-section">
-      <h2><span class="accent">##</span> Contact</h2>
-      <ul class="contact-list mono">
-        <li><span class="accent">&gt;</span> scott@scott-wheeler.com</li>
-        <li><span class="accent">&gt;</span> github.com/scottreleehw</li>
-        <li><span class="accent">&gt;</span> linkedin.com/in/YOUR_LINKEDIN</li>
-      </ul>
-    </section>
+      <section class="section contact-section">
+        <h2><span class="accent">##</span> Contact</h2>
+        <ul class="contact-list mono">
+          <li><span class="accent">&gt;</span> scott@scott-wheeler.com</li>
+          <li><span class="accent">&gt;</span> github.com/scottreleehw</li>
+          <li><span class="accent">&gt;</span> linkedin.com/in/YOUR_LINKEDIN</li>
+        </ul>
+      </section>
+    </div>
   </div>
 </BaseLayout>
 
+<script>
+  const input = document.getElementById('terminal-input') as HTMLInputElement;
+  const terminalLock = document.getElementById('terminal-lock');
+  const resumeContent = document.getElementById('resume-content');
+  const errorMsg = document.getElementById('error-msg');
+
+  const validCommands = ['unlock', 'sudo unlock', 'cat resume', 'cat resume.txt', './unlock', 'open resume'];
+
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const cmd = input.value.toLowerCase().trim();
+
+      if (validCommands.includes(cmd)) {
+        // Success - reveal resume
+        terminalLock?.classList.add('hidden');
+        resumeContent?.classList.remove('hidden');
+        resumeContent?.classList.add('fade-in');
+      } else if (cmd === '') {
+        // Empty command
+        return;
+      } else {
+        // Wrong command
+        if (errorMsg) {
+          errorMsg.textContent = `Command not found: ${input.value}`;
+          errorMsg.classList.remove('hidden');
+        }
+        input.value = '';
+      }
+    }
+  });
+
+  // Focus input when clicking anywhere in terminal
+  document.querySelector('.terminal-body')?.addEventListener('click', () => {
+    input?.focus();
+  });
+</script>
+
 <style>
+  .hidden {
+    display: none !important;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Terminal styles */
+  .terminal-lock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+  }
+
+  .terminal-window {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+  }
+
+  .terminal-header {
+    background: var(--bg-tertiary);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .terminal-dot.red { background: #ff5f56; }
+  .terminal-dot.yellow { background: #ffbd2e; }
+  .terminal-dot.green { background: #27ca40; }
+
+  .terminal-title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.8;
+  }
+
+  .terminal-output p {
+    margin: 0;
+  }
+
+  .terminal-output .error {
+    color: #ff5f56;
+  }
+
+  .terminal-output .muted {
+    color: var(--text-muted);
+  }
+
+  .terminal-output code {
+    background: var(--accent-glow);
+    color: var(--accent);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+  }
+
+  .terminal-input-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .terminal-input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    flex: 1;
+    outline: none;
+    caret-color: transparent;
+  }
+
+  .cursor {
+    color: var(--accent);
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  #error-msg {
+    margin-top: 0.5rem;
+    color: #ff5f56;
+  }
+
+  /* Resume content styles */
   .page-header {
     margin-bottom: 3rem;
   }

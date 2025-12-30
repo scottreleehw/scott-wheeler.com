@@ -1,7 +1,7 @@
 ---
 title: "Hello, World"
 description: "First post on my new site. Here's what I'm planning to write about."
-date: 2024-12-30
+date: 2025-12-30
 tags: ["meta"]
 ---
 
@@ -9,10 +9,9 @@ Welcome to my blog. This is a sample post to show you how blog entries work.
 
 ## What I'll Write About
 
-- Security research and CTF writeups
 - Project updates and build logs
 - Thoughts on privacy and infosec
-- Random tinkering with microcontrollers and AI
+- Random tinkering with microcontrollers like ESP32 and others and of course, AI
 
 ## How This Site Works
 
@@ -24,7 +23,7 @@ To add a new post, I just create a new `.md` file in `src/content/blog/` with fr
 ---
 title: "Post Title"
 description: "Brief description"
-date: 2024-12-30
+date: 2025-12-30
 tags: ["tag1", "tag2"]
 ---
 ```

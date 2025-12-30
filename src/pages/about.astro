@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="About Scott Wheeler - Privacy/Information Security Officer">
+  <div class="container">
+    <header class="page-header">
+      <h1><span class="accent">#</span> About Me</h1>
+    </header>
+
+    <section class="section">
+      <h2><span class="accent">##</span> Who I Am</h2>
+      <p>
+        I'm Scott Wheeler, a Privacy/Information Security Officer with over a decade
+        of experience in IT. I'm passionate about protecting data, building secure
+        systems, and tinkering with technology in my spare time.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2><span class="accent">##</span> What I Do</h2>
+      <p>
+        By day, I lead privacy and security initiatives, develop policies, and
+        conduct risk assessments. I work to ensure organizations stay compliant
+        and secure in an ever-evolving threat landscape.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2><span class="accent">##</span> Interests</h2>
+      <div class="interests-grid">
+        <div class="interest">
+          <h3>Security</h3>
+          <p>Privacy, compliance, risk assessment, and staying ahead of threats.</p>
+        </div>
+        <div class="interest">
+          <h3>Hardware</h3>
+          <p>Tinkering with ESP32s, microcontrollers, and IoT projects.</p>
+        </div>
+        <div class="interest">
+          <h3>AI</h3>
+          <p>Exploring AI tools, automation, and practical applications.</p>
+        </div>
+        <div class="interest">
+          <h3>Building</h3>
+          <p>Creating tools and projects that solve real problems.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2><span class="accent">##</span> This Site</h2>
+      <p>
+        This is my corner of the internet where I share projects, write about
+        things I'm learning, and document my experiments. Built with Astro and
+        hosted on CloudFlare Pages.
+      </p>
+    </section>
+
+    <section class="section contact-cta">
+      <h2><span class="accent">##</span> Get In Touch</h2>
+      <p>Want to chat about security, collaborate on a project, or just say hi?</p>
+      <div class="links mono">
+        <a href="mailto:scott@scott-wheeler.com"><span class="accent">&gt;</span> scott@scott-wheeler.com</a>
+        <a href="https://github.com/scottreleehw" target="_blank" rel="noopener"><span class="accent">&gt;</span> github</a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: 3rem;
+  }
+
+  .page-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child {
+    border-bottom: none;
+  }
+
+  .section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .section p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    max-width: 700px;
+  }
+
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .interest {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem;
+  }
+
+  .interest h3 {
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .interest p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .contact-cta .links {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+
+  .contact-cta .links a {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .contact-cta .links a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 600px) {
+    .interests-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-cta .links {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+</style>

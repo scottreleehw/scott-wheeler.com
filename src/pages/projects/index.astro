@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+const sortedProjects = projects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Projects" description="Security tools, scripts, and personal projects by Scott Wheeler">
+  <div class="container">
+    <header class="page-header">
+      <h1><span class="accent">#</span> Projects</h1>
+      <p>Things I've built, hacked together, or am currently tinkering with.</p>
+    </header>
+
+    <ul class="project-list">
+      {sortedProjects.map((project) => (
+        <li class="project-item">
+          <a href={`/projects/${project.slug}`}>
+            <div class="project-header">
+              <h2>{project.data.title}</h2>
+              {project.data.github && (
+                <a href={project.data.github} target="_blank" rel="noopener" class="github-icon" onclick="event.stopPropagation()">
+                  [github]
+                </a>
+              )}
+            </div>
+            <p>{project.data.description}</p>
+            <div class="project-meta">
+              <div class="tags">
+                {project.data.tags.map((tag: string) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+              <time class="mono">{project.data.date.toISOString().split('T')[0]}</time>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {sortedProjects.length === 0 && (
+      <p class="empty-state mono">No projects yet. Check back soon!</p>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: 3rem;
+  }
+
+  .page-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .project-list {
+    list-style: none;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .project-item > a {
+    display: block;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .project-item > a:hover {
+    border-color: var(--accent);
+    background: var(--bg-tertiary);
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-header h2 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .github-icon {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .github-icon:hover {
+    color: var(--accent);
+  }
+
+  .project-item p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .project-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-dim);
+    background: var(--accent-glow);
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+  }
+
+  time {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .empty-state {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 3rem;
+  }
+</style>

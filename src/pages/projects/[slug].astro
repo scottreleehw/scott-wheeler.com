@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+---
+
+<BaseLayout title={project.data.title} description={project.data.description}>
+  <article class="container">
+    <header class="article-header">
+      <a href="/projects" class="back-link mono"><span class="accent">&lt;</span> projects</a>
+      <h1>{project.data.title}</h1>
+      <p class="description">{project.data.description}</p>
+      <div class="meta">
+        <div class="tags">
+          {project.data.tags.map((tag: string) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+        <time class="mono">{project.data.date.toISOString().split('T')[0]}</time>
+      </div>
+      {(project.data.github || project.data.demo) && (
+        <div class="links mono">
+          {project.data.github && (
+            <a href={project.data.github} target="_blank" rel="noopener">
+              <span class="accent">&gt;</span> github
+            </a>
+          )}
+          {project.data.demo && (
+            <a href={project.data.demo} target="_blank" rel="noopener">
+              <span class="accent">&gt;</span> demo
+            </a>
+          )}
+        </div>
+      )}
+    </header>
+
+    <div class="content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .description {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-dim);
+    background: var(--accent-glow);
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+  }
+
+  time {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .links {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .links a {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .links a:hover {
+    color: var(--accent);
+  }
+
+  .content {
+    line-height: 1.8;
+  }
+
+  .content :global(h2) {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .content :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .content :global(ul), .content :global(ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .content :global(pre) {
+    margin: 1.5rem 0;
+  }
+
+  .content :global(img) {
+    max-width: 100%;
+    border-radius: 4px;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.75rem;
+    }
+
+    .meta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

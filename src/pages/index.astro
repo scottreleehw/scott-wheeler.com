@@ -1,0 +1,200 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+const posts = await getCollection('blog');
+
+const recentProjects = projects.slice(0, 3);
+const recentPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
+---
+
+<BaseLayout title="Home">
+  <div class="container">
+    <section class="hero">
+      <p class="greeting mono"><span class="accent">$</span> whoami</p>
+      <h1>Scott Wheeler</h1>
+      <p class="tagline">Security Professional | Builder | Tinkerer</p>
+      <p class="bio">
+        Privacy/Information Security Officer by day. I build security tools,
+        tinker with microcontrollers, and explore AI. This is where I share
+        what I'm working on.
+      </p>
+      <div class="cta-links mono">
+        <a href="/projects" class="cta"><span class="accent">&gt;</span> view projects</a>
+        <a href="/blog" class="cta"><span class="accent">&gt;</span> read blog</a>
+      </div>
+    </section>
+
+    {recentProjects.length > 0 && (
+      <section class="section">
+        <h2 class="section-title"><span class="accent">#</span> Recent Projects</h2>
+        <ul class="project-list">
+          {recentProjects.map((project) => (
+            <li class="project-item">
+              <a href={`/projects/${project.slug}`}>
+                <h3>{project.data.title}</h3>
+                <p>{project.data.description}</p>
+                <div class="tags">
+                  {project.data.tags.map((tag: string) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="/projects" class="view-all mono"><span class="accent">&gt;</span> all projects</a>
+      </section>
+    )}
+
+    {recentPosts.length > 0 && (
+      <section class="section">
+        <h2 class="section-title"><span class="accent">#</span> Recent Posts</h2>
+        <ul class="post-list">
+          {recentPosts.map((post) => (
+            <li class="post-item">
+              <a href={`/blog/${post.slug}`}>
+                <time class="mono">{post.data.date.toISOString().split('T')[0]}</time>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="/blog" class="view-all mono"><span class="accent">&gt;</span> all posts</a>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 2rem 0 4rem;
+  }
+
+  .greeting {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tagline {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .bio {
+    color: var(--text-secondary);
+    max-width: 600px;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .cta-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .cta {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .cta:hover {
+    color: var(--accent);
+  }
+
+  .section {
+    padding: 2rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+  }
+
+  .project-list, .post-list {
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .project-item a, .post-item a {
+    display: block;
+    padding: 1.25rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .project-item a:hover, .post-item a:hover {
+    border-color: var(--accent);
+    background: var(--bg-tertiary);
+  }
+
+  .project-item h3, .post-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .project-item p, .post-item p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-item time {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-dim);
+    background: var(--accent-glow);
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+  }
+
+  .view-all {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .view-all:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .cta-links {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+</style>

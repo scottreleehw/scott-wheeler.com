@@ -29,7 +29,6 @@ After months of random IP assignments and "I'll document it later," I spent a da
 | 100 | pi-hole | 10.0.0.3 | LXC | 2 | 512MB | 8GB | DNS/ad-blocking |
 | 101 | lubelogger | 10.0.0.55 | LXC | 1 | 512MB | 32GB | Vehicle maintenance |
 | 102 | caddy | 10.0.0.52 | LXC | 1 | 512MB | 8GB | Reverse proxy |
-| 103 | haos | 10.0.0.53 | VM | 2 | 4GB | 32GB | Home Assistant |
 | 105 | bookstack | 10.0.0.56 | LXC | 1 | 1GB | 4GB | Documentation wiki |
 | 107 | jellyfin | 10.0.0.54 | LXC | 2 | 2GB | 75GB | Media server |
 
@@ -45,7 +44,6 @@ Infrastructure (1-49):
 Servers (50-99):
   .50  - Proxmox host
   .52  - Caddy
-  .53  - Home Assistant
   .54  - Jellyfin
   .55  - Lubelogger
   .56  - Bookstack

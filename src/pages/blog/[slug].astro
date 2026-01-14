@@ -134,6 +134,29 @@ const { Content } = await post.render();
     text-underline-offset: 2px;
   }
 
+  .content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+
+  .content :global(th),
+  .content :global(td) {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+
+  .content :global(th) {
+    background: var(--bg-secondary, rgba(255,255,255,0.05));
+    font-weight: 600;
+  }
+
+  .content :global(tr:hover) {
+    background: var(--bg-secondary, rgba(255,255,255,0.02));
+  }
+
   .article-footer {
     margin-top: 4rem;
     padding-top: 2rem;

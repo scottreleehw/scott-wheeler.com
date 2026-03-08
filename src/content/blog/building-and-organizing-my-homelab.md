@@ -14,42 +14,37 @@ After months of random IP assignments and "I'll document it later," I spent a da
 | Server | Lenovo ThinkCentre Mini PC |
 | CPU | Multi-core (low TDP) |
 | RAM | 16GB (7.8GB allocated to containers) |
-| System Drive | NVMe SSD, 66GB |
-| Container Storage | SSD, 233GB LVM-thin |
+| System Drive | NVMe SSD |
+| Container Storage | SSD, LVM-thin |
 | Backup Drive | 2TB USB 3.0 External |
-| Router | Netgear Nighthawk RAX45 |
+| Router | Consumer Wi-Fi 6 router |
 | Switch | Ubiquiti EdgeRouter X (dumb switch mode) |
 
-**Hypervisor:** Proxmox VE 8.2.7, Kernel 6.8.12-2-pve
+**Hypervisor:** Proxmox VE (latest stable)
 
 ## Container/VM Inventory
 
-| ID | Name | IP | Type | CPU | RAM | Disk | Purpose |
-|----|------|-----|------|-----|-----|------|---------|
-| 100 | pi-hole | 10.0.0.3 | LXC | 2 | 512MB | 8GB | DNS/ad-blocking |
-| 101 | lubelogger | 10.0.0.55 | LXC | 1 | 512MB | 32GB | Vehicle maintenance |
-| 102 | caddy | 10.0.0.52 | LXC | 1 | 512MB | 8GB | Reverse proxy |
-| 105 | bookstack | 10.0.0.56 | LXC | 1 | 1GB | 4GB | Documentation wiki |
-| 107 | jellyfin | 10.0.0.54 | LXC | 2 | 2GB | 75GB | Media server |
+| Name | Type | CPU | RAM | Disk | Purpose |
+|------|------|-----|-----|------|---------|
+| pi-hole | LXC | 2 | 512MB | 8GB | DNS/ad-blocking |
+| lubelogger | LXC | 1 | 512MB | 32GB | Vehicle maintenance |
+| caddy | LXC | 1 | 512MB | 8GB | Reverse proxy |
+| bookstack | LXC | 1 | 1GB | 4GB | Documentation wiki |
+| jellyfin | LXC | 2 | 2GB | 75GB | Media server |
 
 ## Network Architecture
 
-```
-10.0.0.0/24
+I organized the `/24` subnet into logical blocks:
 
+```
 Infrastructure (1-49):
-  .2   - Gateway (Nighthawk)
-  .3   - Pi-hole DNS
+  Gateway, Pi-hole DNS
 
 Servers (50-99):
-  .50  - Proxmox host
-  .52  - Caddy
-  .54  - Jellyfin
-  .55  - Lubelogger
-  .56  - Bookstack
+  Proxmox host, Caddy, Jellyfin, Lubelogger, Bookstack
 
 Static Devices (100-149):
-  Reserved
+  Reserved for future use
 
 DHCP (150-254):
   Dynamic pool
@@ -61,22 +56,22 @@ Migrating containers is straightforward:
 
 ```bash
 # Stop container
-pct stop 105
+pct stop <vmid>
 
 # Update network config
-pct set 105 --net0 name=eth0,bridge=vmbr0,ip=10.0.0.56/24,gw=10.0.0.2
+pct set <vmid> --net0 name=eth0,bridge=vmbr0,ip=<new-ip>/24,gw=<gateway>
 
 # Start container
-pct start 105
+pct start <vmid>
 ```
 
-For Proxmox host, edit `/etc/network/interfaces`:
+For the Proxmox host itself, edit `/etc/network/interfaces`:
 
 ```
 auto vmbr0
 iface vmbr0 inet static
-    address 10.0.0.50/24
-    gateway 10.0.0.2
+    address <host-ip>/24
+    gateway <gateway-ip>
     bridge-ports eno1
     bridge-stp off
     bridge-fd 0
@@ -86,41 +81,29 @@ Apply with `ifreload -a`. ~5 seconds downtime.
 
 ## Caddy Reverse Proxy
 
-Using Caddy's internal CA for HTTPS on local network - no Let's Encrypt needed since services aren't internet-exposed.
+Using Caddy's internal CA for HTTPS on the local network — no Let's Encrypt needed since services aren't internet-exposed.
 
 ### Caddyfile
 
 ```
 {
-    email scott@scott-wheeler.com
     local_certs
 }
 
-proxmox.scott-wheeler.com {
-    reverse_proxy 10.0.0.50:8006 {
+proxmox.example.com {
+    reverse_proxy <proxmox-ip>:8006 {
         transport http {
             tls_insecure_skip_verify
         }
     }
 }
 
-lube.scott-wheeler.com {
-    reverse_proxy 10.0.0.55:8080
-}
-
-pihole.scott-wheeler.com {
-    redir / /admin
-    reverse_proxy 10.0.0.3:80
-}
-
-bookstack.scott-wheeler.com {
-    reverse_proxy 10.0.0.56:80
-}
-
-jellyfin.scott-wheeler.com {
-    reverse_proxy 10.0.0.54:8096
+service.example.com {
+    reverse_proxy <service-ip>:<port>
 }
 ```
+
+The pattern is the same for each service — a hostname that Caddy matches, proxied to the container's internal IP and port. Proxmox needs `tls_insecure_skip_verify` because its built-in web UI uses a self-signed cert.
 
 ### Trust the Local CA
 
@@ -136,18 +119,7 @@ sudo trust extract-compat
 
 ### Local DNS Records
 
-Add to Pi-hole (`/etc/pihole/custom.list` or via web UI):
-
-```
-10.0.0.52 caddy.scott-wheeler.com
-10.0.0.52 proxmox.scott-wheeler.com
-10.0.0.52 lube.scott-wheeler.com
-10.0.0.52 pihole.scott-wheeler.com
-10.0.0.52 bookstack.scott-wheeler.com
-10.0.0.52 jellyfin.scott-wheeler.com
-```
-
-All domains point to Caddy, which routes by hostname.
+All internal hostnames point to Caddy's IP in Pi-hole's local DNS records (`/etc/pihole/custom.list` or via web UI). Caddy then routes by hostname to the appropriate container.
 
 ### Prevent Database Bloat
 
@@ -165,6 +137,8 @@ systemctl restart pihole-FTL
 ```
 
 ### Journal Limits
+
+Container journals can grow fast. Set limits:
 
 ```bash
 mkdir -p /etc/systemd/journald.conf.d/
@@ -185,16 +159,13 @@ systemctl restart systemd-journald
 # Format
 mkfs.ext4 -L proxmox-backups /dev/sdb1
 
-# Get UUID
-blkid /dev/sdb1
-
-# Add to /etc/fstab
-UUID=21b64a95-b691-411a-ab11-50b3e7c2f8f8 /mnt/backups ext4 defaults 0 2
+# Add to /etc/fstab (use your drive's UUID from blkid)
+UUID=<your-uuid> /mnt/backups ext4 defaults 0 2
 
 # Mount
 mount -a
 
-# Add to Proxmox storage (via CLI)
+# Add to Proxmox storage
 pvesm add dir backup-usb --path /mnt/backups --content backup
 ```
 
@@ -203,7 +174,7 @@ pvesm add dir backup-usb --path /mnt/backups --content backup
 - **When:** Sunday 02:00
 - **Compression:** ZSTD
 - **Retention:** 14 backups
-- **Storage:** backup-usb (2TB external)
+- **Storage:** 2TB external USB
 
 Estimated weekly backup: ~30-40GB. 14 weeks retention = ~500GB.
 
@@ -211,7 +182,7 @@ Estimated weekly backup: ~30-40GB. 14 weeks retention = ~500GB.
 
 ```bash
 # Backup specific container
-vzdump 100 --storage backup-usb --mode snapshot --compress zstd
+vzdump <vmid> --storage backup-usb --mode snapshot --compress zstd
 
 # Check backup logs
 tail -100 /var/log/vzdump.log
@@ -224,7 +195,7 @@ ls -lh /mnt/backups/dump/
 
 ### Bookstack URL Migration
 
-Bookstack stores URLs in the database. After IP change:
+Bookstack stores URLs in the database. After an IP change:
 
 ```bash
 cd /opt/bookstack
@@ -235,7 +206,7 @@ systemctl restart apache2
 
 ### Pi-hole 403 on Root
 
-Pi-hole web UI lives at `/admin`. Add redirect in Caddy:
+Pi-hole web UI lives at `/admin`. Add a redirect in Caddy:
 
 ```
 redir / /admin
@@ -243,7 +214,7 @@ redir / /admin
 
 ### Proxmox No-Subscription Repo
 
-Default enterprise repo requires subscription. Switch to community:
+Default enterprise repo requires a subscription. Switch to community:
 
 ```bash
 echo "deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription" > /etc/apt/sources.list.d/pve-no-subscription.list
@@ -254,13 +225,13 @@ apt update
 
 | Action | Space Freed |
 |--------|-------------|
-| Deleted unused containers (104, 106) | 96 GB |
+| Deleted unused containers | ~96 GB |
 | Pi-hole DB vacuum | ~1 GB |
 | Pi-hole journal cleanup | 220 MB |
 | Lubelogger journal cleanup | 3.1 GB |
 | **Total** | **~100 GB** |
 
-SSD pool: 75% → 47%
+SSD pool went from 75% to 47% utilization.
 
 ## Useful Commands
 
@@ -280,13 +251,12 @@ vzdump <vmid> --storage backup-usb --mode snapshot --compress zstd
 pct restore <vmid> /path/to/backup.tar.zst
 
 # Network
-pct set <vmid> --net0 name=eth0,bridge=vmbr0,ip=10.0.0.X/24,gw=10.0.0.2
+pct set <vmid> --net0 name=eth0,bridge=vmbr0,ip=<ip>/24,gw=<gateway>
 ```
 
 ## Future Plans
 
-- Migrate Pi-hole to 10.0.0.51 (currently at legacy .3 for stability)
 - VLAN segmentation for IoT isolation
-- Wireguard for remote access
-- Uptime Kuma or Netdata for monitoring
+- VPN for remote access
+- Uptime monitoring
 - Offsite backup rotation (3-2-1 strategy)
